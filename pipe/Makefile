@@ -6,13 +6,13 @@
 #    By: abdsebba <abdsebba@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/28 17:18:29 by abdsebba          #+#    #+#              #
-#    Updated: 2025/02/02 12:48:41 by abdsebba         ###   ########.fr        #
+#    Updated: 2025/02/10 18:08:35 by abdsebba         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRC    = pipex.c check_path.c helper_function.c error_print.c
 OBJ    = $(SRC:.c=.o)
-SRC_BONUS = bonus/bonnus_.c bonus/get_next_line.c bonus/exute_cmd.c bonus/helper.c bonus/parte_2.c
+SRC_BONUS = bonus/pipex_bonus.c bonus/get_next_line.c bonus/exute_cmd_bonus.c bonus/helper.c bonus/parte_2_bonus.c
 OBJ_BONUS = $(SRC_BONUS:.c=.o)
 NAME   = pipex
 BONUS  = pipex_bonus
@@ -22,14 +22,17 @@ LIB    = libft/libft.a
 
 all: $(NAME)
 
+bonus: $(BONUS)
+
+$(OBJ):%.o: %.c pipex.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
 $(NAME): $(OBJ)
 #make all -C libft
 	$(CC) $(CFLAGS) $(OBJ) $(LIB) -o $@
 
-%.o: %.c pipex.h bonus/bonus.h
+$(OBJ_BONUS):%.o: %.c bonus/pipex_bonus.h
 	$(CC) $(CFLAGS) -c $< -o $@
-
-bonus: $(BONUS)
 
 $(BONUS): $(OBJ_BONUS)
 #make all -C libft

@@ -6,7 +6,7 @@
 /*   By: abdsebba <abdsebba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 17:18:23 by abdsebba          #+#    #+#             */
-/*   Updated: 2025/02/02 12:09:42 by abdsebba         ###   ########.fr       */
+/*   Updated: 2025/02/09 23:27:13 by abdsebba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,55 +29,70 @@ char	*find_path(char **p)
 	return (NULL);
 }
 
-int	in_child_process(char **av, char **env, char **path, int *fd)
+int	in_child_process1(char **av, char **env, char **path, int *fd)
 {
 	int	f;
 
 	f = open(av[1], O_RDONLY);
 	if (f == -1)
-		return (ft_print_error("Couldn't open the infile\n"), 0);
-	dup2(f, 0);
+		return (ft_print_error("zsh: no such file or directory: infile\n"), 0);
+	if (dup2(f, 0) == -1)
+		return (0);
+	close(f);
 	close(fd[0]);
-	dup2(fd[1], 1);
-	ft_check_path(av, env, path);
+	if (dup2(fd[1], 1) == -1)
+		return (0);
+	close(fd[1]);
+	if (!ft_check_path(av, env, path))
+		return (0);
 	return (1);
 }
 
-int	all_valid_command(char **av, char **path)
+int	in_child_process2(char **av, char **env, char **path, int *fd)
 {
-	if (!check_first_command(av[2], path))
-		return (ft_print_error("command not found\n"), 0);
-	else if (!check_second_command(av[3], path))
-		return (ft_print_error("command not found\n"), 0);
+	int	file;
+
+	close(fd[1]);
+	file = open(av[4], O_CREAT | O_RDWR | O_TRUNC, 0777);
+	if (file == -1)
+		return (ft_print_error("Couldn't open the outfile\n"), 0);
+	if (dup2(fd[0], 0) == -1)
+		return (0);
+	close(fd[0]);
+	if (dup2(file, 1) == -1)
+		return (0);
+	close(file);
+	if (!ft_check_path2(av, env, path))
+		return (0);
 	return (1);
 }
 
 int	manage_command(char **av, char **env, char **path)
 {
-	int	id;
+	int	id[2];
 	int	fd[2];
-	int	f1;
 
-	if (!all_valid_command(av, path) || pipe(fd) == -1)
+	if (pipe(fd) == -1)
 		return (0);
-	id = fork();
-	if (id == -1)
+	id[0] = fork();
+	if (id[0] == -1)
 		return (ft_print_error("The function fork() failed\n"), 0);
-	if (id == 0)
+	if (id[0] == 0)
 	{
-		if (!in_child_process(av, env, path, fd))
+		if (!in_child_process1(av, env, path, fd))
 			return (0);
 	}
-	else
+	id[1] = fork();
+	if (id[1] == -1)
+		return (ft_print_error("The function fork() failed\n"), 0);
+	if (id[1] == 0)
 	{
-		close(fd[1]);
-		f1 = open(av[4], O_CREAT | O_RDWR | O_TRUNC, 0777);
-		if (f1 == -1)
-			return (ft_print_error("Couldn't open the outfile\n"), 0);
-		dup2(fd[0], 0);
-		dup2(f1, 1);
-		ft_check_path2(av, env, path);
+		if (in_child_process2(av, env, path, fd) == 0)
+			return (0);
 	}
+	ft_close(fd, id);
+	if (!check_cmd_pa(av, path))
+		return (0);
 	return (1);
 }
 
@@ -93,7 +108,7 @@ int	main(int ac, char *av[], char **env)
 	if (env == NULL || *env == NULL)
 		return (ft_print_error("env Invalid\n"), 1);
 	else if (!valid_arg(av))
-		return (ft_print_error("Ivalid argument\n"), 1);
+		return (ft_print_error("Invalid argument\n"), 1);
 	envarment = find_path(env);
 	if (envarment == NULL)
 		return (1);
@@ -101,7 +116,10 @@ int	main(int ac, char *av[], char **env)
 	if (path == NULL)
 		return (1);
 	if (!manage_command(av, env, path))
-		return (ft_free(path), 1);
+	{
+		ft_free(path);
+		return (1);
+	}
 	ft_free(path);
 	return (0);
 }

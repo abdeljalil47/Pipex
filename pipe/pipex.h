@@ -6,7 +6,7 @@
 /*   By: abdsebba <abdsebba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 17:18:26 by abdsebba          #+#    #+#             */
-/*   Updated: 2025/02/02 11:07:34 by abdsebba         ###   ########.fr       */
+/*   Updated: 2025/02/10 18:22:41 by abdsebba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ void	ft_print_error(const char *str);
 void	ft_free(char **path);
 int		valid_arg(char **av);
 int		valid_path(char	**command, char **path, char **cmd);
-int		check_first_command(char *str, char **path);
-int		check_second_command(char *str, char **path);
 int		check_cmd(char **s);
+void	ft_close(int *fd, int *id);
+int		check_cmd_pa(char **av, char **path);
 
 #endif

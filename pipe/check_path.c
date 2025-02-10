@@ -6,7 +6,7 @@
 /*   By: abdsebba <abdsebba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 17:18:39 by abdsebba          #+#    #+#             */
-/*   Updated: 2025/02/01 20:50:26 by abdsebba         ###   ########.fr       */
+/*   Updated: 2025/02/09 20:32:35 by abdsebba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ int	valid_path(char **command, char **path, char **cmd)
 	char	*full_path;
 
 	i = 0;
+	if (access(cmd[0], X_OK) == 0)
+		return ((*command = cmd[0]), 1);
 	while (path[i])
 	{
 		full_path = ft_strjoin1(path[i], cmd[0]);
@@ -51,7 +53,7 @@ int	ft_check_path(char **av, char **env, char **path)
 	valid_path(&command, path, cmd);
 	if (execve(command, cmd, env) == -1)
 	{
-		write(2, "Error in child\n", 15);
+		write(2, "zsh: command not found\n", 24);
 		ft_free(cmd);
 		return (0);
 	}
@@ -72,7 +74,7 @@ int	ft_check_path2(char **av, char **env, char **path)
 	valid_path(&command, path, cmd);
 	if (execve(command, cmd, env) == -1)
 	{
-		write(2, "Error in parent\n", 16);
+		write(2, "zsh: command not foundd\n", 25);
 		ft_free(cmd);
 		return (0);
 	}

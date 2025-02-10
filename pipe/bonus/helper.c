@@ -6,7 +6,7 @@
 /*   By: abdsebba <abdsebba@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 10:50:05 by abdsebba          #+#    #+#             */
-/*   Updated: 2025/02/02 12:46:50 by abdsebba         ###   ########.fr       */
+/*   Updated: 2025/02/10 18:24:33 by abdsebba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,32 @@ void	ft_free_bonus(char **path)
 		i++;
 	}
 	free(path);
+}
+
+void	ft_free_bonus_2(char **res, char **path)
+{
+	int	i;
+
+	i = 0;
+	while (path[i])
+	{
+		free(path[i]);
+		i++;
+	}
+	i = 0;
+	while (res[i])
+	{
+		free(res[i]);
+		i++;
+	}
+	free(path);
+	free(res);
+}
+
+int	check(char **s)
+{
+	if ((s[0][0] == '.' && s[0][0] == '/') || s[0][0] == '.'
+		|| s[0][0] == '/')
+		return (0);
+	return (1);
 }
