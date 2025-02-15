@@ -1,0 +1,17 @@
+Makefile
+bonus
+check_path.c
+check_path.o
+error_print.c
+error_print.o
+helper_function.c
+helper_function.o
+infile
+libr
+ls
+outfile
+pipex
+pipex.c
+pipex.h
+pipex.o
+pp
